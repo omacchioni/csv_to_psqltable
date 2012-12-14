@@ -1,0 +1,4 @@
+field1;field2;field3;field4;field5
+1;2012-02-02;1.23;text;1
+2;2012-02-03;2.23;text2;this is actually a string
+2;2012-02-04;3.23;text3;this is actually a string
