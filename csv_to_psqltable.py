@@ -31,6 +31,9 @@ class PGTableCreator():
         except (ValueError, OverflowError):
             return False
 
+    def is_type_boolean(self, s):
+        return s.lower() in ('t', 'true', 'y', 'yes', '1', 'f', 'false', 'n', 'no', '0')
+
     def is_type_date(self, s):
         # 2012-DEC-01 to "2012-Dec-01"
         s = s.title()
@@ -63,7 +66,7 @@ class PGTableCreator():
 
     def run(self, filename, tablename):
         with open(filename, 'rb') as csvfile:
-            csvreader = csv.reader(csvfile, delimiter=';', quotechar='"')
+            csvreader = csv.reader(csvfile, delimiter=',', quotechar='"')
             headers = csvreader.next()
             dups = self._duplicates(headers)
             if dups:
@@ -73,6 +76,7 @@ class PGTableCreator():
                 'integer': True,
                 'float': True,
                 'date': True,
+                'boolean': True,
                 'datetime': True,
                 'maxlen': 0,
             }
@@ -86,7 +90,7 @@ class PGTableCreator():
                     continue
                 i = 0
                 for cell in row:
-                    for cell_type in ['integer', 'float', 'date', 'datetime']:
+                    for cell_type in ['integer', 'float', 'date', 'datetime', 'boolean']:
                         f = getattr(self, "is_type_%s" % cell_type)
                         if cell and header_properties[headers[i]][cell_type] and not f(cell):
                             header_properties[headers[i]][cell_type] = False
@@ -99,7 +103,9 @@ class PGTableCreator():
             print "CREATE TABLE %s (" % (tablename, )
             field_declaration = []
             for h in headers:
-                if header_properties[h]['integer']:
+                if header_properties[h]['boolean']:
+                    field_declaration.append("%s BOOLEAN" % (h, ))
+                elif header_properties[h]['integer']:
                     field_declaration.append("%s INT" % (h, ))
                 elif header_properties[h]['float']:
                     field_declaration.append("%s FLOAT" % (h, ))
