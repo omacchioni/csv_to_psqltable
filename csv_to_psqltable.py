@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import csv
 import time
@@ -65,12 +65,12 @@ class PGTableCreator():
         return False
 
     def run(self, filename, tablename):
-        with open(filename, 'rb') as csvfile:
-            csvreader = csv.reader(csvfile, delimiter=',', quotechar='"')
-            headers = csvreader.next()
+        with open(filename, 'r') as csvfile:
+            csvreader = csv.reader(csvfile, delimiter=';', quotechar='"')
+            headers = next(csvreader)
             dups = self._duplicates(headers)
             if dups:
-                print "Warning - duplicate columns, %s" % str(dups)
+                print("Warning - duplicate columns, %s" % str(dups))
 
             default_properties = {
                 'integer': True,
@@ -86,7 +86,7 @@ class PGTableCreator():
                 line += 1
                 # Skip invalid lines
                 if len(row) != len(headers):
-                    print "Warning - skipped line %d" % (line + 1, )
+                    print("Warning - skipped line %d" % (line + 1, ))
                     continue
                 i = 0
                 for cell in row:
@@ -100,7 +100,7 @@ class PGTableCreator():
             # Remove empty headers
             headers = filter(bool, headers)
 
-            print "CREATE TABLE %s (" % (tablename, )
+            print("CREATE TABLE %s (" % (tablename, ))
             field_declaration = []
             for h in headers:
                 if header_properties[h]['boolean']:
@@ -115,8 +115,9 @@ class PGTableCreator():
                     field_declaration.append("%s TIMESTAMP" % (h, ))
                 else:
                     field_declaration.append("%s VARCHAR(%s)" % (h, header_properties[h]['maxlen']))
-            print (", ".join(field_declaration))
-            print ");"
+            print(", ".join(field_declaration))
+            print(");")
+
 
 if __name__ == "__main__":
     parser = OptionParser()
