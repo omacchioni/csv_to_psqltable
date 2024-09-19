@@ -65,7 +65,7 @@ class PGTableCreator():
         return False
 
     def run(self, filename, tablename):
-        with open(filename, 'r') as csvfile:
+        with open(filename, 'r', encoding='utf-8') as csvfile:
             csvreader = csv.reader(csvfile, delimiter=';', quotechar='"')
             headers = next(csvreader)
             dups = self._duplicates(headers)

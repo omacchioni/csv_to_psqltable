@@ -18,6 +18,10 @@ Running the following command will give you this output:
     field1 INT, field2 DATE, field3 FLOAT, field4 VARCHAR(5), field5 VARCHAR(25)
     );
 
+You can then create the table and load it with:
+
+\copy test from 'test_file.csv' with delimiter ';' csv header
+
 ## Datatypes
 
 The following datatypes are tested:
